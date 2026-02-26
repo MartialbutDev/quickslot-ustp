@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/quickslot-ustp/static/css/main.deeb0dda.css",
-    "main.js": "/quickslot-ustp/static/js/main.444228ce.js",
+    "main.css": "/quickslot-ustp/static/css/main.55ab9193.css",
+    "main.js": "/quickslot-ustp/static/js/main.fd077328.js",
     "index.html": "/quickslot-ustp/index.html",
-    "main.deeb0dda.css.map": "/quickslot-ustp/static/css/main.deeb0dda.css.map",
-    "main.444228ce.js.map": "/quickslot-ustp/static/js/main.444228ce.js.map"
+    "main.55ab9193.css.map": "/quickslot-ustp/static/css/main.55ab9193.css.map",
+    "main.fd077328.js.map": "/quickslot-ustp/static/js/main.fd077328.js.map"
   },
   "entrypoints": [
-    "static/css/main.deeb0dda.css",
-    "static/js/main.444228ce.js"
+    "static/css/main.55ab9193.css",
+    "static/js/main.fd077328.js"
   ]
 }
