@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import './Admin.css';
+import '../styles/AdminLayout.css';  // Updated import
 
 const AdminLayout = ({ children }) => {
   const navigate = useNavigate();

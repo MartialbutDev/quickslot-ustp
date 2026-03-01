@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db, dbOperations } from '../../database/db';
 import AdminLayout from './AdminLayout';
-import './Admin.css';
+import '../styles/UserManagement.css';  // Updated import
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
