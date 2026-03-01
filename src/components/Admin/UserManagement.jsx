@@ -70,91 +70,36 @@ const UserManagement = () => {
         <h1 style={{ marginBottom: '8px', fontSize: '28px', fontWeight: '600', color: '#1a1a2e' }}>User Management</h1>
         <p style={{ marginBottom: '24px', color: '#6c757d', fontSize: '15px' }}>Manage mobile app users (students, faculty, staff) across all campus locations.</p>
 
-        {/* Stats as compact buttons/cards */}
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '30px' }}>
-          <div 
-            onClick={() => setActiveFilter('all')}
-            style={{ 
-              cursor: 'pointer',
-              padding: '12px 20px',
-              backgroundColor: activeFilter === 'all' ? '#e9ecef' : 'white',
-              border: '1px solid #dee2e6',
-              borderRadius: '12px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-              transition: 'all 0.2s',
-              minWidth: '100px',
-              textAlign: 'center'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeFilter === 'all' ? '#e9ecef' : 'white'}
-          >
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#212529' }}>{stats.all}</div>
-            <div style={{ color: '#6c757d', fontSize: '13px' }}>Users</div>
-          </div>
+        {/* Dropdown Scroll Bar for Choices & Search Bar Container */}
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '30px', flexWrap: 'wrap' }}>
           
-          <div 
-            onClick={() => setActiveFilter('pending')}
+          {/* Status Dropdown (Scrollable Choices) */}
+          <select 
+            value={activeFilter}
+            onChange={(e) => setActiveFilter(e.target.value)}
             style={{ 
-              cursor: 'pointer',
-              padding: '12px 20px',
-              backgroundColor: activeFilter === 'pending' ? '#e9ecef' : 'white',
-              border: '1px solid #dee2e6',
+              padding: '12px 16px',
+              minWidth: '200px',
+              border: '1px solid #e9ecef',
               borderRadius: '12px',
+              fontSize: '14px',
+              outline: 'none',
+              backgroundColor: 'white',
+              color: '#495057',
               boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-              transition: 'all 0.2s',
-              minWidth: '100px',
-              textAlign: 'center'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeFilter === 'pending' ? '#e9ecef' : 'white'}
-          >
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#212529' }}>{stats.pending}</div>
-            <div style={{ color: '#6c757d', fontSize: '13px' }}>Pending</div>
-          </div>
-          
-          <div 
-            onClick={() => setActiveFilter('active')}
-            style={{ 
               cursor: 'pointer',
-              padding: '12px 20px',
-              backgroundColor: activeFilter === 'active' ? '#e9ecef' : 'white',
-              border: '1px solid #dee2e6',
-              borderRadius: '12px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-              transition: 'all 0.2s',
-              minWidth: '100px',
-              textAlign: 'center'
+              transition: 'border-color 0.2s'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeFilter === 'active' ? '#e9ecef' : 'white'}
+            onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+            onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
           >
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#212529' }}>{stats.active}</div>
-            <div style={{ color: '#6c757d', fontSize: '13px' }}>Active</div>
-          </div>
-          
-          <div 
-            onClick={() => setActiveFilter('suspended')}
-            style={{ 
-              cursor: 'pointer',
-              padding: '12px 20px',
-              backgroundColor: activeFilter === 'suspended' ? '#e9ecef' : 'white',
-              border: '1px solid #dee2e6',
-              borderRadius: '12px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-              transition: 'all 0.2s',
-              minWidth: '100px',
-              textAlign: 'center'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8f9fa'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = activeFilter === 'suspended' ? '#e9ecef' : 'white'}
-          >
-            <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#212529' }}>{stats.suspended}</div>
-            <div style={{ color: '#6c757d', fontSize: '13px' }}>Suspended</div>
-          </div>
-        </div>
+            <option value="all">Users ({stats.all})</option>
+            <option value="pending">Pending ({stats.pending})</option>
+            <option value="active">Active ({stats.active})</option>
+            <option value="suspended">Suspended ({stats.suspended})</option>
+          </select>
 
-        {/* Search bar */}
-        <div style={{ marginBottom: '30px' }}>
+          {/* Search bar */}
           <input 
             type="text" 
             placeholder="Search by name, email, or ID..." 
@@ -162,7 +107,7 @@ const UserManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ 
               padding: '12px 16px', 
-              width: '100%',
+              flex: '1',
               maxWidth: '500px',
               border: '1px solid #e9ecef',
               borderRadius: '12px',
