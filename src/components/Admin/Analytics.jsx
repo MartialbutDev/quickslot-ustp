@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../../database/db';
+import { db } from '../../database/db'; // Make sure dbOperations is imported here if you use it!
 import AdminLayout from './AdminLayout';
-import '../styles/Analytics.css';  // Updated import
+import '../styles/Analytics.css';
 
 const Analytics = () => {
   const navigate = useNavigate();
@@ -57,7 +57,6 @@ const Analytics = () => {
     const users = db.mobileUsers || [];
     const gadgets = db.gadgets || [];
     const rentals = db.rentals || [];
-    const notifications = db.notifications || [];
 
     // Overview calculations
     const totalRevenue = rentals.reduce((sum, r) => sum + (r.totalAmount || 0), 0);
@@ -241,7 +240,6 @@ const Analytics = () => {
 
   const exportReport = (format) => {
     if (format === 'csv') {
-      // Create CSV content
       const headers = ['Metric', 'Value'];
       const rows = [
         ['Total Users', analytics.overview.totalUsers],
@@ -260,7 +258,6 @@ const Analytics = () => {
         ...rows.map(row => row.join(','))
       ].join('\n');
 
-      // Download CSV
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -283,27 +280,40 @@ const Analytics = () => {
     );
   }
 
+  // Dynamic Pie Chart Calculation
+  const totalUserTypes = analytics.userStats.byType.student + analytics.userStats.byType.faculty + analytics.userStats.byType.staff;
+  const studentDeg = totalUserTypes > 0 ? (analytics.userStats.byType.student / totalUserTypes) * 360 : 0;
+  const facultyDeg = totalUserTypes > 0 ? (analytics.userStats.byType.faculty / totalUserTypes) * 360 : 0;
+  
+  const pieGradient = `conic-gradient(
+    #3498db 0deg ${studentDeg}deg, 
+    #2ecc71 ${studentDeg}deg ${studentDeg + facultyDeg}deg, 
+    #e67e22 ${studentDeg + facultyDeg}deg 360deg
+  )`;
+
   return (
     <AdminLayout>
       <div className="analytics-dashboard">
+        
         {/* Header */}
-        <div className="analytics-header">
+        <div className="analytics-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div className="header-left">
             <h1>Analytics Dashboard</h1>
             <p className="welcome-text">Data-driven insights for your rental system</p>
           </div>
-          <div className="header-right">
+          <div className="header-right" style={{ display: 'flex', gap: '12px' }}>
             <select 
               className="time-range-select"
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
+              style={{ padding: '10px 16px', border: '1px solid #e9ecef', borderRadius: '12px', outline: 'none', backgroundColor: 'white', cursor: 'pointer' }}
             >
               <option value="week">Last 7 Days</option>
               <option value="month">Last 30 Days</option>
               <option value="year">Last 12 Months</option>
               <option value="all">All Time</option>
             </select>
-            <button className="btn-export" onClick={() => exportReport('csv')}>
+            <button className="btn-export" onClick={() => exportReport('csv')} style={{ padding: '10px 20px', backgroundColor: '#6c5ce7', color: 'white', border: 'none', borderRadius: '12px', cursor: 'pointer' }}>
               📥 Export CSV
             </button>
           </div>
@@ -345,7 +355,7 @@ const Analytics = () => {
           </div>
         </div>
 
-        {/* Charts Row 1 */}
+        {/* Charts Row 1 (Bar & Line Charts) */}
         <div className="charts-row">
           <div className="chart-card">
             <div className="chart-header">
@@ -355,7 +365,8 @@ const Analytics = () => {
             <div className="chart-container bar-chart">
               {analytics.rentalStats.byMonth.map((item, index) => (
                 <div key={index} className="chart-bar-wrapper">
-                  <div className="chart-bar" style={{ height: `${(item.count / 10) * 100}px` }}>
+                  {/* Assuming height calculation maxes around 10 for your UI */}
+                  <div className="chart-bar" style={{ height: `${Math.min((item.count / 10) * 100, 100)}%` }}>
                     <span className="bar-value">{item.count}</span>
                   </div>
                   <span className="bar-label">{item.month}</span>
@@ -372,7 +383,8 @@ const Analytics = () => {
             <div className="chart-container line-chart">
               {analytics.rentalStats.revenueByMonth.map((item, index) => (
                 <div key={index} className="line-point-wrapper">
-                  <div className="line-point" style={{ bottom: `${(item.revenue / 20000) * 100}px` }}>
+                  {/* Assuming height calculation maxes around 20k for your UI */}
+                  <div className="line-point" style={{ bottom: `${Math.min((item.revenue / 20000) * 100, 100)}%` }}>
                     <span className="point-value">₱{(item.revenue / 1000).toFixed(0)}k</span>
                   </div>
                   <span className="point-label">{item.month}</span>
@@ -388,29 +400,29 @@ const Analytics = () => {
             <div className="chart-header">
               <h3>Users by Type</h3>
             </div>
-            <div className="pie-chart-container">
-              <div className="pie-chart">
-                <div className="pie-segment student" style={{ transform: `rotate(0deg)` }}>
-                  <span className="pie-label">Students {analytics.userStats.byType.student}</span>
-                </div>
-                <div className="pie-segment faculty" style={{ transform: `rotate(${analytics.userStats.byType.student * 3.6}deg)` }}>
-                  <span className="pie-label">Faculty {analytics.userStats.byType.faculty}</span>
-                </div>
-                <div className="pie-segment staff" style={{ transform: `rotate(${(analytics.userStats.byType.student + analytics.userStats.byType.faculty) * 3.6}deg)` }}>
-                  <span className="pie-label">Staff {analytics.userStats.byType.staff}</span>
-                </div>
-              </div>
+            <div className="pie-chart-container" style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+              {/* Using a modern CSS conic-gradient to fix the overlapping text issue! */}
+              <div 
+                className="pie-chart" 
+                style={{ 
+                  background: pieGradient,
+                  borderRadius: '50%',
+                  width: '150px',
+                  height: '150px',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)'
+                }}
+              ></div>
               <div className="pie-legend">
-                <div className="legend-item">
-                  <span className="legend-color student"></span>
+                <div className="legend-item" style={{ marginBottom: '10px' }}>
+                  <span className="legend-color student" style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#3498db', marginRight: '8px', borderRadius: '3px' }}></span>
                   <span>Students ({analytics.userStats.byType.student})</span>
                 </div>
-                <div className="legend-item">
-                  <span className="legend-color faculty"></span>
+                <div className="legend-item" style={{ marginBottom: '10px' }}>
+                  <span className="legend-color faculty" style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#2ecc71', marginRight: '8px', borderRadius: '3px' }}></span>
                   <span>Faculty ({analytics.userStats.byType.faculty})</span>
                 </div>
                 <div className="legend-item">
-                  <span className="legend-color staff"></span>
+                  <span className="legend-color staff" style={{ display: 'inline-block', width: '12px', height: '12px', backgroundColor: '#e67e22', marginRight: '8px', borderRadius: '3px' }}></span>
                   <span>Staff ({analytics.userStats.byType.staff})</span>
                 </div>
               </div>
@@ -427,7 +439,7 @@ const Analytics = () => {
                 <div className="progress-bar-container">
                   <div 
                     className="progress-bar available" 
-                    style={{ width: `${(analytics.gadgetStats.availability.available / analytics.overview.totalGadgets) * 100}%` }}
+                    style={{ width: `${(analytics.gadgetStats.availability.available / Math.max(analytics.overview.totalGadgets, 1)) * 100}%` }}
                   ></div>
                 </div>
                 <span className="status-value">{analytics.gadgetStats.availability.available}</span>
@@ -437,7 +449,7 @@ const Analytics = () => {
                 <div className="progress-bar-container">
                   <div 
                     className="progress-bar rented" 
-                    style={{ width: `${(analytics.gadgetStats.availability.rented / analytics.overview.totalGadgets) * 100}%` }}
+                    style={{ width: `${(analytics.gadgetStats.availability.rented / Math.max(analytics.overview.totalGadgets, 1)) * 100}%` }}
                   ></div>
                 </div>
                 <span className="status-value">{analytics.gadgetStats.availability.rented}</span>
@@ -447,7 +459,7 @@ const Analytics = () => {
                 <div className="progress-bar-container">
                   <div 
                     className="progress-bar maintenance" 
-                    style={{ width: `${(analytics.gadgetStats.availability.maintenance / analytics.overview.totalGadgets) * 100}%` }}
+                    style={{ width: `${(analytics.gadgetStats.availability.maintenance / Math.max(analytics.overview.totalGadgets, 1)) * 100}%` }}
                   ></div>
                 </div>
                 <span className="status-value">{analytics.gadgetStats.availability.maintenance}</span>
