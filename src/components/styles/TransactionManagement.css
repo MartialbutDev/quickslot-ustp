@@ -1,0 +1,374 @@
+/* ============================================
+   TRANSACTION MANAGEMENT STYLES
+   ============================================ */
+
+.transaction-management {
+  padding: 1.5rem;
+}
+
+.transaction-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card-compact {
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.stat-card-compact.info .stat-icon {
+  background: #ebf8ff;
+  color: #4299e1;
+}
+
+.stat-card-compact.warning .stat-icon {
+  background: #fffaf0;
+  color: #ed8936;
+}
+
+.stat-card-compact.success .stat-icon {
+  background: #f0fff4;
+  color: #48bb78;
+}
+
+.stat-card-compact.revenue .stat-icon {
+  background: #faf5ff;
+  color: #9f7aea;
+}
+
+.stat-card-compact.fees .stat-icon {
+  background: #fff5f5;
+  color: #f56565;
+}
+
+.stat-card-compact .stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.stat-card-compact .stat-content {
+  flex: 1;
+}
+
+.stat-card-compact .stat-label {
+  font-size: 0.8rem;
+  color: #718096;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.stat-card-compact .stat-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.transaction-filters {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.transaction-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1400px;
+}
+
+.transaction-table th {
+  background: #f7fafc;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.transaction-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1a1a2e;
+}
+
+.transaction-table .overdue-row {
+  background: #fff5f5;
+}
+
+.rental-id {
+  font-family: monospace;
+  color: #718096;
+}
+
+.user-info,
+.gadget-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info small,
+.gadget-info small {
+  color: #718096;
+  font-size: 0.8rem;
+}
+
+.text-danger {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.overdue-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  background: #fed7d7;
+  color: #c53030;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.amount {
+  font-weight: 600;
+  color: #48bb78;
+}
+
+.late-fee {
+  color: #e53e3e;
+  font-weight: 600;
+}
+
+.btn-action {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin: 0 0.2rem;
+  transition: all 0.2s ease;
+}
+
+.btn-action.return {
+  background: #48bb78;
+  color: white;
+}
+
+.btn-action.reminder {
+  background: #4299e1;
+  color: white;
+}
+
+.btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.completed-label {
+  color: #a0aec0;
+  font-style: italic;
+}
+
+/* Return Modal */
+.return-summary {
+  background: #f7fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  color: #718096;
+  font-weight: 500;
+}
+
+.summary-value {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.return-form {
+  margin-top: 1rem;
+}
+
+.fee-warning {
+  color: #e53e3e;
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
+}
+
+.return-total {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.total-amount {
+  color: #48bb78;
+  font-size: 1.5rem;
+}
+
+/* Modal Styles (reused from Inventory) */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1a1a2e;
+  font-size: 1.3rem;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #718096;
+  padding: 0.5rem;
+}
+
+.modal-close:hover {
+  color: #e53e3e;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: white;
+  color: #4a5568;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .transaction-filters {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .transaction-management {
+    padding: 1.5rem;
+  }
+
+  .transaction-filters {
+    flex-direction: column;
+  }
+}

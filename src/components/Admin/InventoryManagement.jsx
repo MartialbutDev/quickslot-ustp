@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbOperations } from '../../database/db';
 import AdminLayout from './AdminLayout';
-import './Admin.css';
+import '../styles/InventoryManagement.css';  // Updated import
 
 const InventoryManagement = () => {
   const navigate = useNavigate();

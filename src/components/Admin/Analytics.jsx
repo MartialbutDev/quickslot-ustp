@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db } from '../../database/db';
 import AdminLayout from './AdminLayout';
-import './Admin.css';
+import '../styles/Analytics.css';  // Updated import
 
 const Analytics = () => {
   const navigate = useNavigate();

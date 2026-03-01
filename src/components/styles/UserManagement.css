@@ -1,0 +1,169 @@
+/* ============================================
+   USER MANAGEMENT STYLES
+   ============================================ */
+
+/* Filter Tabs */
+.filter-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.filter-tabs button {
+  padding: 0.75rem 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-tabs button:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.filter-tabs button.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* Users Table */
+.users-table {
+  background: white;
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.users-table table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.users-table th {
+  background: #f7fafc;
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #4a5568;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.users-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1a1a2e;
+}
+
+.users-table tbody tr:hover {
+  background: #f7fafc;
+}
+
+/* Status Badges */
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.pending {
+  background: #feebc8;
+  color: #7b341e;
+}
+
+.status-badge.active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status-badge.suspended {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+/* Action Buttons Small */
+.action-buttons-small {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.action-buttons-small button {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-approve {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.btn-approve:hover {
+  background: #9ae6b4;
+  transform: translateY(-2px);
+}
+
+.btn-suspend {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.btn-suspend:hover {
+  background: #feb2b2;
+  transform: translateY(-2px);
+}
+
+.btn-activate {
+  background: #bee3f8;
+  color: #2c5282;
+}
+
+.btn-activate:hover {
+  background: #90cdf4;
+  transform: translateY(-2px);
+}
+
+.btn-notify {
+  background: #e9d8fd;
+  color: #44337a;
+}
+
+.btn-notify:hover {
+  background: #d6bcfa;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filter-tabs {
+    flex-direction: column;
+  }
+  
+  .filter-tabs button {
+    width: 100%;
+  }
+  
+  .action-buttons-small {
+    flex-direction: column;
+  }
+  
+  .action-buttons-small button {
+    width: 100%;
+  }
+}

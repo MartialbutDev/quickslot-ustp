@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbOperations } from '../../database/db';
-import './Admin.css';
+import '../styles/AdminLogin.css';  // Updated import
 
 const AdminLogin = () => {
   const navigate = useNavigate();
