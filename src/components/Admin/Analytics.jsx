@@ -53,19 +53,15 @@ const Analytics = () => {
   }, [navigate, timeRange]);
 
   const calculateAnalytics = () => {
-    // Get data from database
     const users = db.mobileUsers || [];
     const gadgets = db.gadgets || [];
     const rentals = db.rentals || [];
-    const notifications = db.notifications || [];
 
-    // Overview calculations
     const totalRevenue = rentals.reduce((sum, r) => sum + (r.totalAmount || 0), 0);
     const completedRentals = rentals.filter(r => r.status === 'completed').length;
     const totalRentals = rentals.length;
     const returnRate = totalRentals > 0 ? (completedRentals / totalRentals) * 100 : 0;
 
-    // Calculate average rental duration
     const durations = rentals
       .filter(r => r.actualReturn)
       .map(r => {
@@ -77,18 +73,15 @@ const Analytics = () => {
       ? durations.reduce((a, b) => a + b, 0) / durations.length 
       : 0;
 
-    // User stats by type
     const userByType = {
       student: users.filter(u => u.userType === 'student').length,
       faculty: users.filter(u => u.userType === 'faculty').length,
       staff: users.filter(u => u.userType === 'staff').length
     };
 
-    // Get active users (users with active rentals)
     const activeUserIds = new Set(rentals.filter(r => r.status === 'active').map(r => r.userId));
     const activeUsers = activeUserIds.size;
 
-    // Get new users in selected time range
     const now = new Date();
     const rangeStart = new Date();
     if (timeRange === 'week') rangeStart.setDate(now.getDate() - 7);
@@ -100,7 +93,6 @@ const Analytics = () => {
       return regDate >= rangeStart;
     }).length;
 
-    // Top users by rental count
     const userRentalCount = {};
     rentals.forEach(r => {
       userRentalCount[r.userId] = (userRentalCount[r.userId] || 0) + 1;
@@ -119,13 +111,11 @@ const Analytics = () => {
       .sort((a, b) => b.rentals - a.rentals)
       .slice(0, 5);
 
-    // Gadget stats by category
     const gadgetByCategory = {};
     gadgets.forEach(g => {
       gadgetByCategory[g.category] = (gadgetByCategory[g.category] || 0) + 1;
     });
 
-    // Top gadgets by times rented
     const gadgetRentalCount = {};
     rentals.forEach(r => {
       gadgetRentalCount[r.gadgetId] = (gadgetRentalCount[r.gadgetId] || 0) + 1;
@@ -147,21 +137,18 @@ const Analytics = () => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    // Gadget availability
     const availability = {
       available: gadgets.filter(g => g.status === 'available').length,
       rented: gadgets.filter(g => g.status === 'rented').length,
       maintenance: gadgets.filter(g => g.status === 'maintenance').length
     };
 
-    // Rental stats by status
     const rentalByStatus = {
       active: rentals.filter(r => r.status === 'active').length,
       completed: rentals.filter(r => r.status === 'completed').length,
       overdue: rentals.filter(r => r.status === 'overdue').length
     };
 
-    // Monthly rental data
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const currentYear = new Date().getFullYear();
     
@@ -183,7 +170,6 @@ const Analytics = () => {
       return { month, revenue };
     });
 
-    // Financial stats
     const monthlyRevenue = rentals
       .filter(r => {
         const date = new Date(r.rentDate);
@@ -241,7 +227,6 @@ const Analytics = () => {
 
   const exportReport = (format) => {
     if (format === 'csv') {
-      // Create CSV content
       const headers = ['Metric', 'Value'];
       const rows = [
         ['Total Users', analytics.overview.totalUsers],
@@ -260,7 +245,6 @@ const Analytics = () => {
         ...rows.map(row => row.join(','))
       ].join('\n');
 
-      // Download CSV
       const blob = new Blob([csvContent], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -275,86 +259,98 @@ const Analytics = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="dashboard-loading">
+        <main className="dashboard-loading"> {/* Changed to main */}
           <div className="loading-spinner"></div>
           <p>Calculating analytics...</p>
-        </div>
+        </main>
       </AdminLayout>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="analytics-dashboard">
-        {/* Header */}
-        <div className="analytics-header">
+      <main className="analytics-dashboard"> {/* Changed to main */}
+        
+        {/* Header - Changed to header */}
+        <header className="analytics-header">
           <div className="header-left">
             <h1>Analytics Dashboard</h1>
             <p className="welcome-text">Data-driven insights for your rental system</p>
           </div>
           <div className="header-right">
+            <label htmlFor="timeRangeSelect" className="sr-only">Select time range</label>
             <select 
+              id="timeRangeSelect"
               className="time-range-select"
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
+              aria-label="Select time range"
             >
               <option value="week">Last 7 Days</option>
               <option value="month">Last 30 Days</option>
               <option value="year">Last 12 Months</option>
               <option value="all">All Time</option>
             </select>
-            <button className="btn-export" onClick={() => exportReport('csv')}>
-              📥 Export CSV
+            <button 
+              type="button"
+              className="btn-export" 
+              onClick={() => exportReport('csv')}
+              aria-label="Export data as CSV"
+            >
+              <span aria-hidden="true">📥</span> Export CSV
             </button>
           </div>
-        </div>
+        </header>
 
-        {/* KPI Cards */}
-        <div className="kpi-grid">
-          <div className="kpi-card">
-            <div className="kpi-icon">👥</div>
+        {/* KPI Cards - Changed to section */}
+        <section className="kpi-grid" aria-label="Key performance indicators">
+          <article className="kpi-card"> {/* Changed to article */}
+            <div className="kpi-icon" aria-hidden="true">👥</div>
             <div className="kpi-content">
-              <span className="kpi-label">Total Users</span>
-              <span className="kpi-value">{analytics.overview.totalUsers}</span>
-              <span className="kpi-change">+{analytics.userStats.newUsers} new</span>
+              <h2 className="kpi-label">Total Users</h2> {/* Changed to h2 */}
+              <p className="kpi-value">{analytics.overview.totalUsers}</p>
+              <p className="kpi-change">+{analytics.userStats.newUsers} new</p>
             </div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-icon">📦</div>
+          </article>
+          
+          <article className="kpi-card"> {/* Changed to article */}
+            <div className="kpi-icon" aria-hidden="true">📦</div>
             <div className="kpi-content">
-              <span className="kpi-label">Total Gadgets</span>
-              <span className="kpi-value">{analytics.overview.totalGadgets}</span>
-              <span className="kpi-change">{analytics.gadgetStats.availability.available} available</span>
+              <h2 className="kpi-label">Total Gadgets</h2> {/* Changed to h2 */}
+              <p className="kpi-value">{analytics.overview.totalGadgets}</p>
+              <p className="kpi-change">{analytics.gadgetStats.availability.available} available</p>
             </div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-icon">🔄</div>
+          </article>
+          
+          <article className="kpi-card"> {/* Changed to article */}
+            <div className="kpi-icon" aria-hidden="true">🔄</div>
             <div className="kpi-content">
-              <span className="kpi-label">Total Rentals</span>
-              <span className="kpi-value">{analytics.overview.totalRentals}</span>
-              <span className="kpi-change">{analytics.rentalStats.byStatus.active} active</span>
+              <h2 className="kpi-label">Total Rentals</h2> {/* Changed to h2 */}
+              <p className="kpi-value">{analytics.overview.totalRentals}</p>
+              <p className="kpi-change">{analytics.rentalStats.byStatus.active} active</p>
             </div>
-          </div>
-          <div className="kpi-card">
-            <div className="kpi-icon">💰</div>
+          </article>
+          
+          <article className="kpi-card"> {/* Changed to article */}
+            <div className="kpi-icon" aria-hidden="true">💰</div>
             <div className="kpi-content">
-              <span className="kpi-label">Total Revenue</span>
-              <span className="kpi-value">₱{analytics.overview.totalRevenue.toLocaleString()}</span>
-              <span className="kpi-change">₱{analytics.financialStats.monthlyRevenue.toLocaleString()} this month</span>
+              <h2 className="kpi-label">Total Revenue</h2> {/* Changed to h2 */}
+              <p className="kpi-value">₱{analytics.overview.totalRevenue.toLocaleString()}</p>
+              <p className="kpi-change">₱{analytics.financialStats.monthlyRevenue.toLocaleString()} this month</p>
             </div>
-          </div>
-        </div>
+          </article>
+        </section>
 
         {/* Charts Row 1 */}
         <div className="charts-row">
-          <div className="chart-card">
+          <section className="chart-card"> {/* Changed to section */}
             <div className="chart-header">
-              <h3>Rental Trends</h3>
+              <h2>Rental Trends</h2> {/* Changed to h2 */}
               <span className="chart-period">Monthly</span>
             </div>
-            <div className="chart-container bar-chart">
+            <div className="chart-container bar-chart" role="img" aria-label="Bar chart showing rental trends by month">
               {analytics.rentalStats.byMonth.map((item, index) => (
-                <div key={index} className="chart-bar-wrapper">
+                <div key={`${item.month}-${index}`} className="chart-bar-wrapper">
                   <div className="chart-bar" style={{ height: `${(item.count / 10) * 100}px` }}>
                     <span className="bar-value">{item.count}</span>
                   </div>
@@ -362,16 +358,16 @@ const Analytics = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
 
-          <div className="chart-card">
+          <section className="chart-card"> {/* Changed to section */}
             <div className="chart-header">
-              <h3>Revenue by Month</h3>
+              <h2>Revenue by Month</h2> {/* Changed to h2 */}
               <span className="chart-period">₱</span>
             </div>
-            <div className="chart-container line-chart">
+            <div className="chart-container line-chart" role="img" aria-label="Line chart showing revenue by month">
               {analytics.rentalStats.revenueByMonth.map((item, index) => (
-                <div key={index} className="line-point-wrapper">
+                <div key={`${item.month}-${index}`} className="line-point-wrapper">
                   <div className="line-point" style={{ bottom: `${(item.revenue / 20000) * 100}px` }}>
                     <span className="point-value">₱{(item.revenue / 1000).toFixed(0)}k</span>
                   </div>
@@ -379,17 +375,17 @@ const Analytics = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Charts Row 2 */}
         <div className="charts-row">
-          <div className="chart-card half">
+          <section className="chart-card half"> {/* Changed to section */}
             <div className="chart-header">
-              <h3>Users by Type</h3>
+              <h2>Users by Type</h2> {/* Changed to h2 */}
             </div>
             <div className="pie-chart-container">
-              <div className="pie-chart">
+              <div className="pie-chart" role="img" aria-label="Pie chart showing user distribution by type">
                 <div className="pie-segment student" style={{ transform: `rotate(0deg)` }}>
                   <span className="pie-label">Students {analytics.userStats.byType.student}</span>
                 </div>
@@ -402,29 +398,29 @@ const Analytics = () => {
               </div>
               <div className="pie-legend">
                 <div className="legend-item">
-                  <span className="legend-color student"></span>
+                  <span className="legend-color student" aria-hidden="true"></span>
                   <span>Students ({analytics.userStats.byType.student})</span>
                 </div>
                 <div className="legend-item">
-                  <span className="legend-color faculty"></span>
+                  <span className="legend-color faculty" aria-hidden="true"></span>
                   <span>Faculty ({analytics.userStats.byType.faculty})</span>
                 </div>
                 <div className="legend-item">
-                  <span className="legend-color staff"></span>
+                  <span className="legend-color staff" aria-hidden="true"></span>
                   <span>Staff ({analytics.userStats.byType.staff})</span>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="chart-card half">
+          <section className="chart-card half"> {/* Changed to section */}
             <div className="chart-header">
-              <h3>Gadget Status</h3>
+              <h2>Gadget Status</h2> {/* Changed to h2 */}
             </div>
             <div className="status-chart">
               <div className="status-item">
                 <span className="status-label">Available</span>
-                <div className="progress-bar-container">
+                <div className="progress-bar-container" role="progressbar" aria-valuenow={(analytics.gadgetStats.availability.available / analytics.overview.totalGadgets) * 100} aria-valuemin="0" aria-valuemax="100">
                   <div 
                     className="progress-bar available" 
                     style={{ width: `${(analytics.gadgetStats.availability.available / analytics.overview.totalGadgets) * 100}%` }}
@@ -434,7 +430,7 @@ const Analytics = () => {
               </div>
               <div className="status-item">
                 <span className="status-label">Rented</span>
-                <div className="progress-bar-container">
+                <div className="progress-bar-container" role="progressbar" aria-valuenow={(analytics.gadgetStats.availability.rented / analytics.overview.totalGadgets) * 100} aria-valuemin="0" aria-valuemax="100">
                   <div 
                     className="progress-bar rented" 
                     style={{ width: `${(analytics.gadgetStats.availability.rented / analytics.overview.totalGadgets) * 100}%` }}
@@ -444,7 +440,7 @@ const Analytics = () => {
               </div>
               <div className="status-item">
                 <span className="status-label">Maintenance</span>
-                <div className="progress-bar-container">
+                <div className="progress-bar-container" role="progressbar" aria-valuenow={(analytics.gadgetStats.availability.maintenance / analytics.overview.totalGadgets) * 100} aria-valuemin="0" aria-valuemax="100">
                   <div 
                     className="progress-bar maintenance" 
                     style={{ width: `${(analytics.gadgetStats.availability.maintenance / analytics.overview.totalGadgets) * 100}%` }}
@@ -453,21 +449,21 @@ const Analytics = () => {
                 <span className="status-value">{analytics.gadgetStats.availability.maintenance}</span>
               </div>
             </div>
-          </div>
+          </section>
         </div>
 
         {/* Top Lists */}
         <div className="top-lists-row">
-          <div className="top-list-card">
-            <h3>Top Rented Gadgets</h3>
+          <section className="top-list-card"> {/* Changed to section */}
+            <h2>Top Rented Gadgets</h2> {/* Changed to h2 */}
             <table className="top-list-table">
               <thead>
                 <tr>
-                  <th>Rank</th>
-                  <th>Gadget</th>
-                  <th>Category</th>
-                  <th>Times Rented</th>
-                  <th>Revenue</th>
+                  <th scope="col">Rank</th>
+                  <th scope="col">Gadget</th>
+                  <th scope="col">Category</th>
+                  <th scope="col">Times Rented</th>
+                  <th scope="col">Revenue</th>
                 </tr>
               </thead>
               <tbody>
@@ -482,17 +478,17 @@ const Analytics = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </section>
 
-          <div className="top-list-card">
-            <h3>Most Active Users</h3>
+          <section className="top-list-card"> {/* Changed to section */}
+            <h2>Most Active Users</h2> {/* Changed to h2 */}
             <table className="top-list-table">
               <thead>
                 <tr>
-                  <th>Rank</th>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Rentals</th>
+                  <th scope="col">Rank</th>
+                  <th scope="col">User</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Rentals</th>
                 </tr>
               </thead>
               <tbody>
@@ -506,75 +502,75 @@ const Analytics = () => {
                 ))}
               </tbody>
             </table>
-          </div>
+          </section>
         </div>
 
-        {/* Financial Summary */}
-        <div className="financial-summary">
-          <h3>Financial Summary</h3>
+        {/* Financial Summary - Changed to section */}
+        <section className="financial-summary" aria-label="Financial summary">
+          <h2 style={{ marginBottom: '16px' }}>Financial Summary</h2> {/* Changed to h2 */}
           <div className="financial-grid">
-            <div className="financial-item">
-              <span className="financial-label">Total Revenue</span>
-              <span className="financial-value large">₱{analytics.financialStats.totalRevenue.toLocaleString()}</span>
-            </div>
-            <div className="financial-item">
-              <span className="financial-label">Monthly Revenue</span>
-              <span className="financial-value">₱{analytics.financialStats.monthlyRevenue.toLocaleString()}</span>
-            </div>
-            <div className="financial-item">
-              <span className="financial-label">Avg Transaction</span>
-              <span className="financial-value">₱{analytics.financialStats.avgTransactionValue}</span>
-            </div>
-            <div className="financial-item">
-              <span className="financial-label">Pending Payments</span>
-              <span className="financial-value warning">₱{analytics.financialStats.pendingPayments.toLocaleString()}</span>
-            </div>
-            <div className="financial-item">
-              <span className="financial-label">Late Fees Collected</span>
-              <span className="financial-value">₱{analytics.financialStats.lateFeesCollected.toLocaleString()}</span>
-            </div>
+            <article className="financial-item"> {/* Changed to article */}
+              <h3 className="financial-label">Total Revenue</h3> {/* Changed to h3 */}
+              <p className="financial-value large">₱{analytics.financialStats.totalRevenue.toLocaleString()}</p>
+            </article>
+            <article className="financial-item"> {/* Changed to article */}
+              <h3 className="financial-label">Monthly Revenue</h3> {/* Changed to h3 */}
+              <p className="financial-value">₱{analytics.financialStats.monthlyRevenue.toLocaleString()}</p>
+            </article>
+            <article className="financial-item"> {/* Changed to article */}
+              <h3 className="financial-label">Avg Transaction</h3> {/* Changed to h3 */}
+              <p className="financial-value">₱{analytics.financialStats.avgTransactionValue}</p>
+            </article>
+            <article className="financial-item"> {/* Changed to article */}
+              <h3 className="financial-label">Pending Payments</h3> {/* Changed to h3 */}
+              <p className="financial-value warning">₱{analytics.financialStats.pendingPayments.toLocaleString()}</p>
+            </article>
+            <article className="financial-item"> {/* Changed to article */}
+              <h3 className="financial-label">Late Fees Collected</h3> {/* Changed to h3 */}
+              <p className="financial-value">₱{analytics.financialStats.lateFeesCollected.toLocaleString()}</p>
+            </article>
           </div>
-        </div>
+        </section>
 
-        {/* Quick Insights */}
-        <div className="quick-insights">
-          <h3>Quick Insights</h3>
+        {/* Quick Insights - Changed to section */}
+        <section className="quick-insights" aria-label="Quick insights">
+          <h2 style={{ marginBottom: '16px' }}>Quick Insights</h2> {/* Changed to h2 */}
           <div className="insights-grid">
-            <div className="insight-card positive">
-              <div className="insight-icon">📈</div>
+            <article className="insight-card positive"> {/* Changed to article */}
+              <div className="insight-icon" aria-hidden="true">📈</div>
               <div className="insight-content">
                 <p className="insight-text">
                   Rental demand is <strong>{analytics.rentalStats.byStatus.active > 5 ? 'high' : 'moderate'}</strong> with {analytics.rentalStats.byStatus.active} active rentals
                 </p>
               </div>
-            </div>
-            <div className="insight-card warning">
-              <div className="insight-icon">⚠️</div>
+            </article>
+            <article className="insight-card warning"> {/* Changed to article */}
+              <div className="insight-icon" aria-hidden="true">⚠️</div>
               <div className="insight-content">
                 <p className="insight-text">
                   <strong>{analytics.rentalStats.byStatus.overdue}</strong> items are overdue - process returns immediately
                 </p>
               </div>
-            </div>
-            <div className="insight-card info">
-              <div className="insight-icon">💡</div>
+            </article>
+            <article className="insight-card info"> {/* Changed to article */}
+              <div className="insight-icon" aria-hidden="true">💡</div>
               <div className="insight-content">
                 <p className="insight-text">
                   <strong>{analytics.gadgetStats.topGadgets[0]?.name || 'No data'}</strong> is your most popular item
                 </p>
               </div>
-            </div>
-            <div className="insight-card success">
-              <div className="insight-icon">✅</div>
+            </article>
+            <article className="insight-card success"> {/* Changed to article */}
+              <div className="insight-icon" aria-hidden="true">✅</div>
               <div className="insight-content">
                 <p className="insight-text">
                   Return rate is <strong>{analytics.overview.returnRate}%</strong> - {analytics.overview.returnRate > 80 ? 'excellent' : 'needs improvement'}
                 </p>
               </div>
-            </div>
+            </article>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </AdminLayout>
   );
 };

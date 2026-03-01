@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, dbOperations } from '../../database/db';
+import { db } from '../../database/db';
 import AdminLayout from './AdminLayout';
-import '../styles/TransactionManagement.css';  // Updated import
+import '../styles/TransactionManagement.css';
 
 const TransactionManagement = () => {
   const navigate = useNavigate();
@@ -25,7 +25,6 @@ const TransactionManagement = () => {
     pendingFees: 0
   });
 
-  // Return form state
   const [returnData, setReturnData] = useState({
     condition: 'good',
     lateFee: 0,
@@ -52,7 +51,6 @@ const TransactionManagement = () => {
     setUsers(userList);
     setGadgets(gadgetList);
 
-    // Calculate stats
     const activeRentals = rentalList.filter(r => r.status === 'active').length;
     const overdueRentals = rentalList.filter(r => r.status === 'overdue').length;
     const completedRentals = rentalList.filter(r => r.status === 'completed').length;
@@ -73,26 +71,22 @@ const TransactionManagement = () => {
     setLoading(false);
   };
 
-  // Filter transactions
   useEffect(() => {
     let filtered = [...rentals];
 
-    // Apply search
     if (searchTerm) {
       filtered = filtered.filter(r => 
-        r.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.gadgetName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.userId?.toString().includes(searchTerm)
+        (r.id && r.id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (r.userName && r.userName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (r.gadgetName && r.gadgetName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (r.userId && r.userId.toString().includes(searchTerm))
       );
     }
 
-    // Apply status filter
     if (filterStatus !== 'all') {
       filtered = filtered.filter(r => r.status === filterStatus);
     }
 
-    // Apply date range
     if (dateRange.start) {
       filtered = filtered.filter(r => r.rentDate >= dateRange.start);
     }
@@ -106,11 +100,10 @@ const TransactionManagement = () => {
   const handleReturnProcess = (rental) => {
     setSelectedRental(rental);
     
-    // Calculate late fee if applicable
     const today = new Date();
     const expectedReturn = new Date(rental.expectedReturn);
     const daysLate = Math.max(0, Math.ceil((today - expectedReturn) / (1000 * 60 * 60 * 24)));
-    const lateFee = daysLate * 50; // ₱50 per day late fee
+    const lateFee = daysLate * 50;
 
     setReturnData({
       condition: 'good',
@@ -128,7 +121,6 @@ const TransactionManagement = () => {
     if (index !== -1) {
       const today = new Date().toISOString().split('T')[0];
       
-      // Update rental record
       db.rentals[index] = {
         ...selectedRental,
         actualReturn: today,
@@ -139,14 +131,12 @@ const TransactionManagement = () => {
         returnNotes: returnData.notes
       };
 
-      // Update gadget status
       const gadgetIndex = db.gadgets.findIndex(g => g.id === selectedRental.gadgetId);
       if (gadgetIndex !== -1) {
         db.gadgets[gadgetIndex].status = 'available';
         db.gadgets[gadgetIndex].condition = returnData.condition;
       }
 
-      // Log activity
       db.logs.push({
         id: db.logs.length + 1,
         action: 'Processed return',
@@ -163,7 +153,6 @@ const TransactionManagement = () => {
   };
 
   const handleSendReminder = (rental) => {
-    // Add notification
     db.notifications.push({
       id: `N${String(db.notifications.length + 1).padStart(3, '0')}`,
       userId: rental.userId,
@@ -207,85 +196,91 @@ const TransactionManagement = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="dashboard-loading">
+        <main className="dashboard-loading">
           <div className="loading-spinner"></div>
           <p>Loading transaction data...</p>
-        </div>
+        </main>
       </AdminLayout>
     );
   }
 
   return (
     <AdminLayout>
-      <div className="transaction-management">
-        {/* Header */}
-        <div className="transaction-header">
+      <main className="transaction-management">
+        
+        <header className="transaction-header">
           <div className="header-left">
             <h1>Transaction Management</h1>
             <p className="welcome-text">Monitor and process all rental transactions</p>
           </div>
-        </div>
+        </header>
 
-        {/* Stats Cards */}
-        <div className="transaction-stats">
-          <div className="stat-card-compact">
-            <div className="stat-icon">📊</div>
+        <section className="transaction-stats" aria-label="Transaction statistics">
+          <article className="stat-card-compact">
+            <div className="stat-icon" aria-hidden="true">📊</div>
             <div className="stat-content">
-              <span className="stat-label">Total Transactions</span>
-              <span className="stat-value">{stats.total}</span>
+              <h2 className="stat-label">Total Transactions</h2>
+              <p className="stat-value">{stats.total}</p>
             </div>
-          </div>
-          <div className="stat-card-compact info">
-            <div className="stat-icon">🔄</div>
+          </article>
+          <article className="stat-card-compact info">
+            <div className="stat-icon" aria-hidden="true">🔄</div>
             <div className="stat-content">
-              <span className="stat-label">Active</span>
-              <span className="stat-value">{stats.active}</span>
+              <h2 className="stat-label">Active</h2>
+              <p className="stat-value">{stats.active}</p>
             </div>
-          </div>
-          <div className="stat-card-compact warning">
-            <div className="stat-icon">⚠️</div>
+          </article>
+          <article className="stat-card-compact warning">
+            <div className="stat-icon" aria-hidden="true">⚠️</div>
             <div className="stat-content">
-              <span className="stat-label">Overdue</span>
-              <span className="stat-value">{stats.overdue}</span>
+              <h2 className="stat-label">Overdue</h2>
+              <p className="stat-value">{stats.overdue}</p>
             </div>
-          </div>
-          <div className="stat-card-compact success">
-            <div className="stat-icon">✅</div>
+          </article>
+          <article className="stat-card-compact success">
+            <div className="stat-icon" aria-hidden="true">✅</div>
             <div className="stat-content">
-              <span className="stat-label">Completed</span>
-              <span className="stat-value">{stats.completed}</span>
+              <h2 className="stat-label">Completed</h2>
+              <p className="stat-value">{stats.completed}</p>
             </div>
-          </div>
-          <div className="stat-card-compact revenue">
-            <div className="stat-icon">💰</div>
+          </article>
+          <article className="stat-card-compact revenue">
+            <div className="stat-icon" aria-hidden="true">💰</div>
             <div className="stat-content">
-              <span className="stat-label">Total Revenue</span>
-              <span className="stat-value">₱{stats.totalRevenue.toLocaleString()}</span>
+              <h2 className="stat-label">Total Revenue</h2>
+              <p className="stat-value">₱{stats.totalRevenue.toLocaleString()}</p>
             </div>
-          </div>
-          <div className="stat-card-compact fees">
-            <div className="stat-icon">💸</div>
+          </article>
+          <article className="stat-card-compact fees">
+            <div className="stat-icon" aria-hidden="true">💸</div>
             <div className="stat-content">
-              <span className="stat-label">Pending Fees</span>
-              <span className="stat-value">₱{stats.pendingFees.toLocaleString()}</span>
+              <h2 className="stat-label">Pending Fees</h2>
+              <p className="stat-value">₱{stats.pendingFees.toLocaleString()}</p>
             </div>
-          </div>
-        </div>
+          </article>
+        </section>
 
-        {/* Filters */}
-        <div className="transaction-filters">
+        <section className="transaction-filters" aria-label="Search and filter options">
           <div className="search-box">
-            <span className="search-icon">🔍</span>
+            <span className="search-icon" aria-hidden="true">🔍</span>
             <input
+              id="searchTransactions"
               type="text"
               placeholder="Search by ID, user, or gadget..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Search transactions"
             />
           </div>
           
           <div className="filter-group">
-            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+            {/* Removed the "Filter by status" text label - only the select remains */}
+            <select 
+              id="statusFilter"
+              value={filterStatus} 
+              onChange={(e) => setFilterStatus(e.target.value)}
+              aria-label="Filter by status"
+            >
               <option value="all">All Status</option>
               <option value="active">Active</option>
               <option value="overdue">Overdue</option>
@@ -293,36 +288,42 @@ const TransactionManagement = () => {
               <option value="cancelled">Cancelled</option>
             </select>
 
+            {/* Removed the "Start date" text label - only the input remains */}
             <input
+              id="startDate"
               type="date"
-              placeholder="Start Date"
+              placeholder="dd/mm/yyyy"
               value={dateRange.start}
               onChange={(e) => setDateRange({...dateRange, start: e.target.value})}
+              aria-label="Start date"
             />
+            
+            {/* Removed the "End date" text label - only the input remains */}
             <input
+              id="endDate"
               type="date"
-              placeholder="End Date"
+              placeholder="dd/mm/yyyy"
               value={dateRange.end}
               onChange={(e) => setDateRange({...dateRange, end: e.target.value})}
+              aria-label="End date"
             />
           </div>
-        </div>
+        </section>
 
-        {/* Transactions Table */}
-        <div className="transaction-table-container">
+        <section className="transaction-table-container" aria-label="Transactions list">
           <table className="transaction-table">
             <thead>
               <tr>
-                <th>Rental ID</th>
-                <th>User</th>
-                <th>Gadget</th>
-                <th>Rent Date</th>
-                <th>Expected Return</th>
-                <th>Actual Return</th>
-                <th>Status</th>
-                <th>Amount</th>
-                <th>Late Fee</th>
-                <th>Actions</th>
+                <th scope="col">Rental ID</th>
+                <th scope="col">User</th>
+                <th scope="col">Gadget</th>
+                <th scope="col">Rent Date</th>
+                <th scope="col">Expected Return</th>
+                <th scope="col">Actual Return</th>
+                <th scope="col">Status</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Late Fee</th>
+                <th scope="col">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -367,18 +368,20 @@ const TransactionManagement = () => {
                       {(rental.status === 'active' || rental.status === 'overdue') && (
                         <>
                           <button 
+                            type="button"
                             className="btn-action return"
                             onClick={() => handleReturnProcess(rental)}
-                            title="Process return"
+                            aria-label={`Process return for ${rental.gadgetName}`}
                           >
-                            🔄 Return
+                            <span aria-hidden="true">🔄</span> Return
                           </button>
                           <button 
+                            type="button"
                             className="btn-action reminder"
                             onClick={() => handleSendReminder(rental)}
-                            title="Send reminder"
+                            aria-label={`Send reminder to ${rental.userName}`}
                           >
-                            🔔 Remind
+                            <span aria-hidden="true">🔔</span> Remind
                           </button>
                         </>
                       )}
@@ -398,15 +401,21 @@ const TransactionManagement = () => {
               )}
             </tbody>
           </table>
-        </div>
+        </section>
 
-        {/* Return Modal */}
         {showReturnModal && selectedRental && (
-          <div className="modal-overlay">
+          <div className="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="returnModalTitle">
             <div className="modal-content">
               <div className="modal-header">
-                <h2>Process Return</h2>
-                <button className="modal-close" onClick={() => setShowReturnModal(false)}>✕</button>
+                <h2 id="returnModalTitle">Process Return</h2>
+                <button 
+                  type="button"
+                  className="modal-close" 
+                  onClick={() => setShowReturnModal(false)}
+                  aria-label="Close modal"
+                >
+                  <span aria-hidden="true">✕</span>
+                </button>
               </div>
               <div className="modal-body">
                 <div className="return-summary">
@@ -434,8 +443,9 @@ const TransactionManagement = () => {
 
                 <div className="return-form">
                   <div className="form-group">
-                    <label>Gadget Condition</label>
+                    <label htmlFor="returnCondition">Gadget Condition</label>
                     <select
+                      id="returnCondition"
                       value={returnData.condition}
                       onChange={(e) => setReturnData({...returnData, condition: e.target.value})}
                     >
@@ -448,19 +458,21 @@ const TransactionManagement = () => {
                   </div>
 
                   <div className="form-group">
-                    <label>Late Fee (₱) {returnData.lateFee > 0 && <span className="fee-warning">⚠️ Overdue</span>}</label>
+                    <label htmlFor="lateFee">Late Fee (₱) {returnData.lateFee > 0 && <span className="fee-warning">⚠️ Overdue</span>}</label>
                     <input
+                      id="lateFee"
                       type="number"
                       value={returnData.lateFee}
-                      onChange={(e) => setReturnData({...returnData, lateFee: parseInt(e.target.value)})}
+                      onChange={(e) => setReturnData({...returnData, lateFee: parseInt(e.target.value, 10)})}
                       min="0"
                       step="50"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>Notes (optional)</label>
+                    <label htmlFor="returnNotes">Notes (optional)</label>
                     <textarea
+                      id="returnNotes"
                       value={returnData.notes}
                       onChange={(e) => setReturnData({...returnData, notes: e.target.value})}
                       placeholder="Any issues with the return?"
@@ -477,13 +489,25 @@ const TransactionManagement = () => {
                 </div>
               </div>
               <div className="modal-footer">
-                <button className="btn-secondary" onClick={() => setShowReturnModal(false)}>Cancel</button>
-                <button className="btn-primary" onClick={handleReturnSubmit}>Process Return</button>
+                <button 
+                  type="button"
+                  className="btn-secondary" 
+                  onClick={() => setShowReturnModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="button"
+                  className="btn-primary" 
+                  onClick={handleReturnSubmit}
+                >
+                  Process Return
+                </button>
               </div>
             </div>
           </div>
         )}
-      </div>
+      </main>
     </AdminLayout>
   );
 };
