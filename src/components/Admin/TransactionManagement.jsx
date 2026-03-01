@@ -272,20 +272,73 @@ const TransactionManagement = () => {
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="transaction-filters">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
+        {/* Improved Filters and Search Row */}
+        <div className="transaction-filters" style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '30px',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}>
+          
+          {/* Improved Search Bar with Icon */}
+          <div className="search-box" style={{ flex: '1', maxWidth: '400px', position: 'relative' }}>
             <input
               type="text"
               placeholder="Search by ID, user, or gadget..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                padding: '12px 16px 12px 40px',
+                width: '100%',
+                border: '1px solid #e9ecef',
+                borderRadius: '12px',
+                fontSize: '14px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+              onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
             />
+            {/* Search Icon */}
+            <svg 
+              style={{ 
+                position: 'absolute', 
+                left: '14px', 
+                top: '50%', 
+                transform: 'translateY(-50%)', 
+                color: '#adb5bd',
+                pointerEvents: 'none'
+              }} 
+              width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
           
-          <div className="filter-group">
-            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+          {/* Right-aligned Dropdown and Date Filters */}
+          <div className="filter-group" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <select 
+              value={filterStatus} 
+              onChange={(e) => setFilterStatus(e.target.value)}
+              style={{ 
+                padding: '12px 16px',
+                border: '1px solid #e9ecef',
+                borderRadius: '12px',
+                fontSize: '14px',
+                outline: 'none',
+                backgroundColor: 'white',
+                color: '#495057',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+              onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
+            >
               <option value="all">All Status</option>
               <option value="active">Active</option>
               <option value="overdue">Overdue</option>
@@ -295,15 +348,42 @@ const TransactionManagement = () => {
 
             <input
               type="date"
-              placeholder="Start Date"
+              title="Start Date"
               value={dateRange.start}
               onChange={(e) => setDateRange({...dateRange, start: e.target.value})}
+              style={{ 
+                padding: '12px 16px',
+                border: '1px solid #e9ecef',
+                borderRadius: '12px',
+                fontSize: '14px',
+                outline: 'none',
+                backgroundColor: 'white',
+                color: '#495057',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+              onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
             />
+            
             <input
               type="date"
-              placeholder="End Date"
+              title="End Date"
               value={dateRange.end}
               onChange={(e) => setDateRange({...dateRange, end: e.target.value})}
+              style={{ 
+                padding: '12px 16px',
+                border: '1px solid #e9ecef',
+                borderRadius: '12px',
+                fontSize: '14px',
+                outline: 'none',
+                backgroundColor: 'white',
+                color: '#495057',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
+                transition: 'border-color 0.2s'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+              onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
             />
           </div>
         </div>

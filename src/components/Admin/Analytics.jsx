@@ -4,6 +4,7 @@ import { db } from '../../database/db';
 import AdminLayout from './AdminLayout';
 import '../styles/Analytics.css';
 
+
 const Analytics = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
