@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbOperations } from '../../database/db';
 import AdminLayout from './AdminLayout';
-import '../styles/InventoryManagement.css';  // Updated import
+import '../styles/InventoryManagement.css'; 
 
 const InventoryManagement = () => {
   const navigate = useNavigate();
@@ -23,43 +23,29 @@ const InventoryManagement = () => {
     maintenance: 0
   });
 
-  // Form state for adding/editing
   const [formData, setFormData] = useState({
-    name: '',
-    category: '',
-    brand: '',
-    model: '',
-    specs: '',
-    dailyRate: '',
-    condition: 'good',
-    location: '',
-    status: 'available',
-    imageUrl: '',
-    qrCode: ''
+    name: '', category: '', brand: '', model: '', specs: '',
+    dailyRate: '', condition: 'good', location: '', status: 'available',
+    imageUrl: '', qrCode: ''
   });
 
   useEffect(() => {
-    // Check if admin is logged in
     const admin = localStorage.getItem('adminUser');
     if (!admin) {
       navigate('/admin');
       return;
     }
-
     loadInventoryData();
   }, [navigate]);
 
   const loadInventoryData = () => {
-    // Get gadgets from database
     const gadgetList = db.gadgets || [];
     setGadgets(gadgetList);
     setFilteredGadgets(gadgetList);
 
-    // Extract unique categories
     const uniqueCategories = [...new Set(gadgetList.map(g => g.category))];
     setCategories(uniqueCategories);
 
-    // Calculate stats
     setStats({
       total: gadgetList.length,
       available: gadgetList.filter(g => g.status === 'available').length,
@@ -70,11 +56,9 @@ const InventoryManagement = () => {
     setLoading(false);
   };
 
-  // Filter gadgets based on search and filters
   useEffect(() => {
     let filtered = [...gadgets];
 
-    // Apply search
     if (searchTerm) {
       filtered = filtered.filter(g => 
         g.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -84,12 +68,10 @@ const InventoryManagement = () => {
       );
     }
 
-    // Apply status filter
     if (filterStatus !== 'all') {
       filtered = filtered.filter(g => g.status === filterStatus);
     }
 
-    // Apply category filter
     if (filterCategory !== 'all') {
       filtered = filtered.filter(g => g.category === filterCategory);
     }
@@ -104,25 +86,14 @@ const InventoryManagement = () => {
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      category: '',
-      brand: '',
-      model: '',
-      specs: '',
-      dailyRate: '',
-      condition: 'good',
-      location: '',
-      status: 'available',
-      imageUrl: '',
-      qrCode: ''
+      name: '', category: '', brand: '', model: '', specs: '',
+      dailyRate: '', condition: 'good', location: '', status: 'available',
+      imageUrl: '', qrCode: ''
     });
   };
 
   const handleAddGadget = () => {
-    // Generate new ID
     const newId = `G${String(gadgets.length + 1).padStart(3, '0')}`;
-    
-    // Create new gadget
     const newGadget = {
       id: newId,
       ...formData,
@@ -132,10 +103,8 @@ const InventoryManagement = () => {
       timesRented: 0
     };
 
-    // Add to database
     db.gadgets.push(newGadget);
     
-    // Log activity
     db.logs.push({
       id: db.logs.length + 1,
       action: 'Added new gadget',
@@ -144,7 +113,6 @@ const InventoryManagement = () => {
       details: `Added gadget: ${newGadget.name}`
     });
 
-    // Reload data
     loadInventoryData();
     setShowAddModal(false);
     resetForm();
@@ -154,7 +122,6 @@ const InventoryManagement = () => {
   const handleEditGadget = () => {
     if (!selectedGadget) return;
 
-    // Update gadget
     const index = db.gadgets.findIndex(g => g.id === selectedGadget.id);
     if (index !== -1) {
       db.gadgets[index] = {
@@ -164,7 +131,6 @@ const InventoryManagement = () => {
         specs: formData.specs.split(',').map(s => s.trim())
       };
 
-      // Log activity
       db.logs.push({
         id: db.logs.length + 1,
         action: 'Updated gadget',
@@ -188,7 +154,6 @@ const InventoryManagement = () => {
         const deleted = db.gadgets[index];
         db.gadgets.splice(index, 1);
 
-        // Log activity
         db.logs.push({
           id: db.logs.length + 1,
           action: 'Deleted gadget',
@@ -208,7 +173,6 @@ const InventoryManagement = () => {
     if (index !== -1) {
       db.gadgets[index].status = newStatus;
 
-      // Log activity
       db.logs.push({
         id: db.logs.length + 1,
         action: 'Changed gadget status',
@@ -317,20 +281,35 @@ const InventoryManagement = () => {
           </div>
         </div>
 
-        {/* Filters and Search */}
+        {/* Improved Filters and Search */}
         <div className="inventory-filters">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
+          
+          <div className="premium-search-wrapper">
+            <svg className="premium-search-icon" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
             <input
               type="text"
-              placeholder="Search by name, brand, category, or ID..."
+              className="premium-search-input"
+              placeholder="Search by name, brand, category..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+            {searchTerm && (
+              <button 
+                className="premium-search-clear" 
+                onClick={() => setSearchTerm('')} 
+                title="Clear search"
+              >
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
           
           <div className="filter-group">
-            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+            <select className="premium-filter-select" value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
               <option value="all">All Status</option>
               <option value="available">Available</option>
               <option value="rented">Rented</option>
@@ -338,7 +317,7 @@ const InventoryManagement = () => {
               <option value="lost">Lost</option>
             </select>
 
-            <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+            <select className="premium-filter-select" value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
               <option value="all">All Categories</option>
               {categories.map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
@@ -429,7 +408,7 @@ const InventoryManagement = () => {
           </table>
         </div>
 
-        {/* Add Gadget Modal */}
+        {/* Add/Edit Modals remain unchanged below... */}
         {showAddModal && (
           <div className="modal-overlay">
             <div className="modal-content large">
@@ -441,23 +420,11 @@ const InventoryManagement = () => {
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Gadget Name *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="e.g., MacBook Pro 14"
-                      required
-                    />
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} placeholder="e.g., MacBook Pro 14" required />
                   </div>
                   <div className="form-group">
                     <label>Category *</label>
-                    <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      required
-                    >
+                    <select name="category" value={formData.category} onChange={handleInputChange} required >
                       <option value="">Select category</option>
                       <option value="Laptop">Laptop</option>
                       <option value="Tablet">Tablet</option>
@@ -469,54 +436,23 @@ const InventoryManagement = () => {
                   </div>
                   <div className="form-group">
                     <label>Brand</label>
-                    <input
-                      type="text"
-                      name="brand"
-                      value={formData.brand}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Apple, Dell, Canon"
-                    />
+                    <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} placeholder="e.g., Apple, Dell, Canon" />
                   </div>
                   <div className="form-group">
                     <label>Model</label>
-                    <input
-                      type="text"
-                      name="model"
-                      value={formData.model}
-                      onChange={handleInputChange}
-                      placeholder="e.g., XPS 13, EOS 90D"
-                    />
+                    <input type="text" name="model" value={formData.model} onChange={handleInputChange} placeholder="e.g., XPS 13, EOS 90D" />
                   </div>
                   <div className="form-group full-width">
                     <label>Specifications (comma separated)</label>
-                    <input
-                      type="text"
-                      name="specs"
-                      value={formData.specs}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 16GB RAM, 512GB SSD, Intel i7"
-                    />
+                    <input type="text" name="specs" value={formData.specs} onChange={handleInputChange} placeholder="e.g., 16GB RAM, 512GB SSD, Intel i7" />
                   </div>
                   <div className="form-group">
                     <label>Daily Rate (₱) *</label>
-                    <input
-                      type="number"
-                      name="dailyRate"
-                      value={formData.dailyRate}
-                      onChange={handleInputChange}
-                      placeholder="350"
-                      min="0"
-                      step="10"
-                      required
-                    />
+                    <input type="number" name="dailyRate" value={formData.dailyRate} onChange={handleInputChange} placeholder="350" min="0" step="10" required />
                   </div>
                   <div className="form-group">
                     <label>Condition</label>
-                    <select
-                      name="condition"
-                      value={formData.condition}
-                      onChange={handleInputChange}
-                    >
+                    <select name="condition" value={formData.condition} onChange={handleInputChange} >
                       <option value="excellent">Excellent</option>
                       <option value="good">Good</option>
                       <option value="fair">Fair</option>
@@ -525,34 +461,18 @@ const InventoryManagement = () => {
                   </div>
                   <div className="form-group">
                     <label>Location</label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                      placeholder="e.g., IT Lab A, Media Center"
-                    />
+                    <input type="text" name="location" value={formData.location} onChange={handleInputChange} placeholder="e.g., IT Lab A, Media Center" />
                   </div>
                   <div className="form-group">
                     <label>Status</label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                    >
+                    <select name="status" value={formData.status} onChange={handleInputChange} >
                       <option value="available">Available</option>
                       <option value="maintenance">Maintenance</option>
                     </select>
                   </div>
                   <div className="form-group">
                     <label>QR Code (optional)</label>
-                    <input
-                      type="text"
-                      name="qrCode"
-                      value={formData.qrCode}
-                      onChange={handleInputChange}
-                      placeholder="e.g., QR-MBP-001"
-                    />
+                    <input type="text" name="qrCode" value={formData.qrCode} onChange={handleInputChange} placeholder="e.g., QR-MBP-001" />
                   </div>
                 </div>
               </div>
@@ -564,7 +484,6 @@ const InventoryManagement = () => {
           </div>
         )}
 
-        {/* Edit Gadget Modal */}
         {showEditModal && (
           <div className="modal-overlay">
             <div className="modal-content large">
@@ -576,22 +495,11 @@ const InventoryManagement = () => {
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Gadget Name *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
                   </div>
                   <div className="form-group">
                     <label>Category *</label>
-                    <select
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      required
-                    >
+                    <select name="category" value={formData.category} onChange={handleInputChange} required >
                       <option value="">Select category</option>
                       <option value="Laptop">Laptop</option>
                       <option value="Tablet">Tablet</option>
@@ -603,50 +511,23 @@ const InventoryManagement = () => {
                   </div>
                   <div className="form-group">
                     <label>Brand</label>
-                    <input
-                      type="text"
-                      name="brand"
-                      value={formData.brand}
-                      onChange={handleInputChange}
-                    />
+                    <input type="text" name="brand" value={formData.brand} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label>Model</label>
-                    <input
-                      type="text"
-                      name="model"
-                      value={formData.model}
-                      onChange={handleInputChange}
-                    />
+                    <input type="text" name="model" value={formData.model} onChange={handleInputChange} />
                   </div>
                   <div className="form-group full-width">
                     <label>Specifications (comma separated)</label>
-                    <input
-                      type="text"
-                      name="specs"
-                      value={formData.specs}
-                      onChange={handleInputChange}
-                    />
+                    <input type="text" name="specs" value={formData.specs} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label>Daily Rate (₱) *</label>
-                    <input
-                      type="number"
-                      name="dailyRate"
-                      value={formData.dailyRate}
-                      onChange={handleInputChange}
-                      min="0"
-                      step="10"
-                      required
-                    />
+                    <input type="number" name="dailyRate" value={formData.dailyRate} onChange={handleInputChange} min="0" step="10" required />
                   </div>
                   <div className="form-group">
                     <label>Condition</label>
-                    <select
-                      name="condition"
-                      value={formData.condition}
-                      onChange={handleInputChange}
-                    >
+                    <select name="condition" value={formData.condition} onChange={handleInputChange} >
                       <option value="excellent">Excellent</option>
                       <option value="good">Good</option>
                       <option value="fair">Fair</option>
@@ -655,20 +536,11 @@ const InventoryManagement = () => {
                   </div>
                   <div className="form-group">
                     <label>Location</label>
-                    <input
-                      type="text"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleInputChange}
-                    />
+                    <input type="text" name="location" value={formData.location} onChange={handleInputChange} />
                   </div>
                   <div className="form-group">
                     <label>Status</label>
-                    <select
-                      name="status"
-                      value={formData.status}
-                      onChange={handleInputChange}
-                    >
+                    <select name="status" value={formData.status} onChange={handleInputChange} >
                       <option value="available">Available</option>
                       <option value="rented">Rented</option>
                       <option value="maintenance">Maintenance</option>
