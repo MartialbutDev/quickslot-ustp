@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbOperations } from '../../database/db';
 import AdminLayout from './AdminLayout';
+<<<<<<< HEAD
 import '../styles/AdminDashboard.css'; // Updated import
+=======
+import '../styles/AdminDashboard.css';  // Updated import
+>>>>>>> e4db55d0d5ad4727938b05454d7b58ccf22453f3
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
