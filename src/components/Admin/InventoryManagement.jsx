@@ -300,83 +300,74 @@ const InventoryManagement = () => {
           </article>
         </section>
 
-<<<<<<< HEAD
-        <section className="inventory-filters" aria-label="Search and filter options">
-          <div className="search-box">
-            <span className="search-icon" aria-hidden="true">🔍</span>
-=======
-        {/* Filters and Search */}
-        <div className="inventory-filters" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '16px' }}>
-          
-          {/* IMPROVED SEARCH BOX */}
-          <div className="search-box" style={{ flex: '1', maxWidth: '400px', position: 'relative' }}>
->>>>>>> e4db55d0d5ad4727938b05454d7b58ccf22453f3
-            <input
-              id="searchGadgets"
-              type="text"
-              placeholder="Search by name, brand, category, or ID..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-<<<<<<< HEAD
-              aria-label="Search gadgets"
-=======
-              style={{
-                padding: '12px 16px 12px 40px',
-                width: '100%',
-                border: '1px solid #e9ecef',
-                borderRadius: '12px',
-                fontSize: '14px',
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
-              onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
->>>>>>> e4db55d0d5ad4727938b05454d7b58ccf22453f3
-            />
-            <svg 
-              style={{ 
-                position: 'absolute', 
-                left: '14px', 
-                top: '50%', 
-                transform: 'translateY(-50%)', 
-                color: '#adb5bd',
-                pointerEvents: 'none'
-              }} 
-              width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-          
-          <div className="filter-group">
-            <select 
-              id="statusFilter"
-              value={filterStatus} 
-              onChange={(e) => setFilterStatus(e.target.value)}
-              aria-label="Filter by status"
-            >
-              <option value="all">All Status</option>
-              <option value="available">Available</option>
-              <option value="rented">Rented</option>
-              <option value="maintenance">Maintenance</option>
-              <option value="lost">Lost</option>
-            </select>
+ {/* Corrected Filters and Search Section */}
+        <section className="inventory-filters-section">
+          <div className="inventory-filters" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', flexWrap: 'wrap', gap: '16px' }}>
+            
+            {/* IMPROVED SEARCH BOX */}
+            <div className="search-box" style={{ flex: '1', maxWidth: '400px', position: 'relative' }}>
+              <input
+                id="searchGadgets"
+                type="text"
+                placeholder="Search by name, brand, category, or ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  padding: '12px 16px 12px 40px',
+                  width: '100%',
+                  border: '1px solid #e9ecef',
+                  borderRadius: '12px',
+                  fontSize: '14px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#6c5ce7'}
+                onBlur={(e) => e.target.style.borderColor = '#e9ecef'}
+              />
+              <svg 
+                style={{ 
+                  position: 'absolute', 
+                  left: '14px', 
+                  top: '50%', 
+                  transform: 'translateY(-50%)', 
+                  color: '#adb5bd',
+                  pointerEvents: 'none'
+                }} 
+                width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            
+            <div className="filter-group">
+              <select 
+                id="statusFilter"
+                value={filterStatus} 
+                onChange={(e) => setFilterStatus(e.target.value)}
+                aria-label="Filter by status"
+              >
+                <option value="all">All Status</option>
+                <option value="available">Available</option>
+                <option value="rented">Rented</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="lost">Lost</option>
+              </select>
 
-            <select 
-              id="categoryFilter"
-              value={filterCategory} 
-              onChange={(e) => setFilterCategory(e.target.value)}
-              aria-label="Filter by category"
-            >
-              <option value="all">All Categories</option>
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-        </section>
+              <select 
+                id="categoryFilter"
+                value={filterCategory} 
+                onChange={(e) => setFilterCategory(e.target.value)}
+                aria-label="Filter by category"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+          </div> 
+        </section> {/* Line 369 Fix: Section now correctly follows the closing div */}
 
         <section className="inventory-table-container" aria-label="Gadgets inventory list">
           <table className="inventory-table">
