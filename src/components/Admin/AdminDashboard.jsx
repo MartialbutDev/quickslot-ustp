@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { db, dbOperations } from '../../database/db';
 import AdminLayout from './AdminLayout';
+<<<<<<< HEAD
+import '../styles/AdminDashboard.css'; // Updated import
+=======
 import '../styles/AdminDashboard.css';  // Updated import
+>>>>>>> e4db55d0d5ad4727938b05454d7b58ccf22453f3
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -25,22 +29,17 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if admin is logged in
     const admin = localStorage.getItem('adminUser');
     if (!admin) {
       navigate('/admin');
       return;
     }
 
-    // Load dashboard data
     loadDashboardData();
-    
-    // Simulate loading
     setTimeout(() => setLoading(false), 1000);
   }, [navigate]);
 
   const loadDashboardData = () => {
-    // Get stats from database
     setStats({
       totalUsers: db.mobileUsers.length,
       pendingUsers: dbOperations.getPendingUsers().length,
@@ -52,7 +51,6 @@ const AdminDashboard = () => {
       completedRentals: dbOperations.getCompletedRentals().length
     });
 
-    // Quick stats for cards
     setQuickStats([
       {
         id: 1,
@@ -96,16 +94,10 @@ const AdminDashboard = () => {
       }
     ]);
 
-    // Get recent activities
     setRecentActivities(db.logs.slice(-8).reverse());
-
-    // Get recent notifications
     setNotifications(db.notifications.slice(-4).reverse());
-
-    // Get recent rentals
     setRecentRentals(db.rentals.slice(-5).reverse());
 
-    // Top rented gadgets
     setTopGadgets(db.analytics.topRentedGadgets || [
       { name: 'MacBook Pro', count: 45 },
       { name: 'iPad Pro', count: 38 },
@@ -140,7 +132,7 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="dashboard-loading">
+        <div className="dashboard-loading">  {/* Keep as div for loading state */}
           <div className="loading-spinner"></div>
           <p>Loading dashboard data...</p>
         </div>
@@ -150,9 +142,10 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="admin-dashboard">
-        {/* Welcome Header */}
-        <div className="dashboard-header">
+      <main className="admin-dashboard">  {/* Keep main with className */}
+        
+        {/* Welcome Header - Use header with className */}
+        <header className="dashboard-header">
           <div className="header-left">
             <h1>Dashboard Overview</h1>
             <p className="welcome-text">
@@ -161,48 +154,54 @@ const AdminDashboard = () => {
           </div>
           <div className="header-right">
             <div className="date-display">
-              <span className="date-icon">📅</span>
-              <span>{new Date().toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
+              <span className="date-icon" aria-hidden="true">📅</span>
+              <span>{new Date().toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
               })}</span>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* Quick Stats Grid */}
-        <div className="stats-grid-enhanced">
+        {/* Quick Stats Grid - Use section with className */}
+        <section className="stats-grid-enhanced">
           {quickStats.map(stat => (
-            <div key={stat.id} className="stat-card-enhanced" style={{ backgroundColor: stat.bgColor }}>
-              <div className="stat-icon-wrapper" style={{ backgroundColor: stat.color }}>
+            <article key={stat.id} className="stat-card-enhanced" style={{ backgroundColor: stat.bgColor }}>
+              <div className="stat-icon-wrapper" style={{ backgroundColor: stat.color }} aria-hidden="true">
                 <span>{stat.icon}</span>
               </div>
               <div className="stat-content">
-                <div className="stat-label">{stat.label}</div>
+                <h2 className="stat-label">{stat.label}</h2>
                 <div className="stat-value">{stat.value}</div>
                 <div className="stat-change">{stat.change}</div>
                 <div className="stat-details">{stat.details}</div>
               </div>
-            </div>
+            </article>
           ))}
-        </div>
+        </section>
 
         {/* Main Dashboard Grid */}
         <div className="dashboard-grid">
-          {/* Recent Activity */}
-          <div className="grid-card activity-card">
+          
+          {/* Recent Activity - Use section with className */}
+          <section className="grid-card activity-card">
             <div className="card-header">
               <h2>Recent Activity</h2>
-              <button className="view-all-btn" onClick={() => navigate('/admin/analytics')}>
+              <button
+                type="button"
+                className="view-all-btn"
+                onClick={() => navigate('/admin/analytics')}
+                aria-label="View all activities"
+              >
                 View All →
               </button>
             </div>
             <div className="activity-timeline">
               {recentActivities.map((activity, index) => (
-                <div key={index} className="timeline-item">
-                  <div className="timeline-dot"></div>
+                <div key={`${activity.timestamp}-${index}`} className="timeline-item">
+                  <div className="timeline-dot" aria-hidden="true"></div>
                   <div className="timeline-content">
                     <div className="timeline-header">
                       <span className="timeline-action">{activity.action}</span>
@@ -218,13 +217,18 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          {/* Recent Rentals */}
-          <div className="grid-card rentals-card">
+          {/* Recent Rentals - Use section with className */}
+          <section className="grid-card rentals-card">
             <div className="card-header">
               <h2>Recent Rentals</h2>
-              <button className="view-all-btn" onClick={() => navigate('/admin/transactions')}>
+              <button
+                type="button"
+                className="view-all-btn"
+                onClick={() => navigate('/admin/transactions')}
+                aria-label="View all rentals"
+              >
                 View All →
               </button>
             </div>
@@ -232,9 +236,9 @@ const AdminDashboard = () => {
               {recentRentals.map((rental, index) => {
                 const status = getStatusBadge(rental.status);
                 return (
-                  <div key={index} className="rental-item">
+                  <article key={`${rental.id}-${index}`} className="rental-item">
                     <div className="rental-info">
-                      <div className="rental-gadget">{rental.gadgetName}</div>
+                      <h3 className="rental-gadget">{rental.gadgetName}</h3>
                       <div className="rental-user">{rental.userName}</div>
                       <div className="rental-dates">
                         <span>📅 {new Date(rental.rentDate).toLocaleDateString()}</span>
@@ -249,7 +253,7 @@ const AdminDashboard = () => {
                         <span className="late-fee">+₱{rental.lateFee}</span>
                       )}
                     </div>
-                  </div>
+                  </article>
                 );
               })}
               {recentRentals.length === 0 && (
@@ -258,67 +262,77 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
-          </div>
+          </section>
 
-          {/* Top Rented Gadgets */}
-          <div className="grid-card top-gadgets-card">
+          {/* Top Rented Gadgets - Use section with className */}
+          <section className="grid-card top-gadgets-card">
             <div className="card-header">
               <h2>Most Popular Items</h2>
-              <button className="view-all-btn" onClick={() => navigate('/admin/analytics')}>
+              <button
+                type="button"
+                className="view-all-btn"
+                onClick={() => navigate('/admin/analytics')}
+                aria-label="View details"
+              >
                 Details →
               </button>
             </div>
             <div className="top-gadgets-list">
               {topGadgets.map((gadget, index) => (
-                <div key={index} className="gadget-rank-item">
+                <article key={`${gadget.name}-${index}`} className="gadget-rank-item">
                   <div className="gadget-rank">
                     <span className="rank-number">#{index + 1}</span>
                     <span className="rank-name">{gadget.name}</span>
                   </div>
                   <div className="rank-count">
                     <span className="count-badge">{gadget.count} rentals</span>
-                    <div className="progress-bar">
-                      <div 
-                        className="progress-fill" 
-                        style={{ 
+                    <div className="progress-bar" role="progressbar" aria-valuenow={(gadget.count / 50) * 100} aria-valuemin="0" aria-valuemax="100">
+                      <div
+                        className="progress-fill"
+                        style={{
                           width: `${(gadget.count / 50) * 100}%`,
-                          backgroundColor: index === 0 ? '#4299e1' : 
-                                         index === 1 ? '#48bb78' : 
+                          backgroundColor: index === 0 ? '#4299e1' :
+                                         index === 1 ? '#48bb78' :
                                          index === 2 ? '#ed8936' : '#9f7aea'
                         }}
                       ></div>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
-          </div>
+          </section>
 
-          {/* Notifications */}
-          <div className="grid-card notifications-card">
+          {/* Notifications - Use section with className */}
+          <section className="grid-card notifications-card">
             <div className="card-header">
               <h2>Notifications</h2>
-              <button className="view-all-btn" onClick={() => navigate('/admin/notifications')}>
+              <button
+                type="button"
+                className="view-all-btn"
+                onClick={() => navigate('/admin/notifications')}
+                aria-label="Manage notifications"
+              >
                 Manage →
               </button>
             </div>
             <div className="notifications-list">
               {notifications.map((notification, index) => (
-                <div key={index} className={`notification-item-enhanced ${notification.type}`}>
-                  <div className="notification-icon">
-                    {notification.type === 'warning' ? '⚠️' : 
+                <article key={`${notification.id}-${index}`} className={`notification-item-enhanced ${notification.type}`}>
+                  <div className="notification-icon" aria-hidden="true">
+                    {notification.type === 'warning' ? '⚠️' :
                      notification.type === 'success' ? '✅' : '📢'}
                   </div>
                   <div className="notification-content">
-                    <div className="notification-title">{notification.title}</div>
-                    <div className="notification-message">{notification.message}</div>
+                    <h3 className="notification-title">{notification.title}</h3>
+                    <p className="notification-message">{notification.message}</p>
                     <div className="notification-meta">
                       <span className="notification-user">To: User #{notification.userId}</span>
                       <span className="notification-time">{notification.sentDate}</span>
                     </div>
                   </div>
                   {!notification.read && <span className="notification-badge">New</span>}
-                </div>
+                </article>
               ))}
               {notifications.length === 0 && (
                 <div className="empty-state">
@@ -326,71 +340,101 @@ const AdminDashboard = () => {
                 </div>
               )}
             </div>
-          </div>
+          </section>
         </div>
 
-        {/* Quick Actions Section */}
-        <div className="quick-actions-enhanced">
+        {/* Quick Actions Section - Use section with className */}
+        <section className="quick-actions-enhanced">
           <h2>Quick Actions</h2>
           <div className="action-grid">
-            <button className="action-btn users" onClick={() => navigate('/admin/users')}>
-              <span className="action-icon">👥</span>
+            <button
+              type="button"
+              className="action-btn users"
+              onClick={() => navigate('/admin/users')}
+              aria-label={`Manage users, pending: ${stats.pendingUsers}`}
+            >
+              <span className="action-icon" aria-hidden="true">👥</span>
               <span className="action-label">Manage Users</span>
               <span className="action-badge">{stats.pendingUsers} pending</span>
             </button>
             
-            <button className="action-btn inventory" onClick={() => navigate('/admin/inventory')}>
-              <span className="action-icon">📦</span>
+            <button
+              type="button"
+              className="action-btn inventory"
+              onClick={() => navigate('/admin/inventory')}
+              aria-label={`Add gadget, available: ${stats.availableGadgets}`}
+            >
+              <span className="action-icon" aria-hidden="true">📦</span>
               <span className="action-label">Add Gadget</span>
               <span className="action-badge">{stats.availableGadgets} available</span>
             </button>
             
-            <button className="action-btn returns" onClick={() => navigate('/admin/transactions')}>
-              <span className="action-icon">🔄</span>
+            <button
+              type="button"
+              className="action-btn returns"
+              onClick={() => navigate('/admin/transactions')}
+              aria-label={`Process returns, overdue: ${stats.overdueItems}`}
+            >
+              <span className="action-icon" aria-hidden="true">🔄</span>
               <span className="action-label">Process Returns</span>
               <span className="action-badge">{stats.overdueItems} overdue</span>
             </button>
             
-            <button className="action-btn reports" onClick={() => navigate('/admin/analytics')}>
-              <span className="action-icon">📊</span>
+            <button
+              type="button"
+              className="action-btn reports"
+              onClick={() => navigate('/admin/analytics')}
+              aria-label="View reports"
+            >
+              <span className="action-icon" aria-hidden="true">📊</span>
               <span className="action-label">View Reports</span>
               <span className="action-badge">+12% revenue</span>
             </button>
             
-            <button className="action-btn notifications" onClick={() => navigate('/admin/notifications')}>
-              <span className="action-icon">🔔</span>
+            <button
+              type="button"
+              className="action-btn notifications"
+              onClick={() => navigate('/admin/notifications')}
+              aria-label={`Send notification, ${notifications.length} new`}
+            >
+              <span className="action-icon" aria-hidden="true">🔔</span>
               <span className="action-label">Send Notification</span>
               <span className="action-badge">{notifications.length} new</span>
             </button>
             
-            <button className="action-btn settings" onClick={() => navigate('/admin/settings')}>
-              <span className="action-icon">⚙️</span>
+            <button
+              type="button"
+              className="action-btn settings"
+              onClick={() => navigate('/admin/settings')}
+              aria-label="Configure settings"
+            >
+              <span className="action-icon" aria-hidden="true">⚙️</span>
               <span className="action-label">Settings</span>
               <span className="action-badge">configure</span>
             </button>
           </div>
-        </div>
+        </section>
 
-        {/* System Status */}
-        <div className="system-status">
+        {/* System Status - Use footer with className */}
+        <footer className="system-status">
           <div className="status-item">
-            <span className="status-indicator online"></span>
+            <span className="status-indicator online" aria-hidden="true"></span>
             <span className="status-label">Database: Connected</span>
           </div>
           <div className="status-item">
-            <span className="status-indicator online"></span>
+            <span className="status-indicator online" aria-hidden="true"></span>
             <span className="status-label">API: Online</span>
           </div>
           <div className="status-item">
-            <span className="status-indicator online"></span>
+            <span className="status-indicator online" aria-hidden="true"></span>
             <span className="status-label">Mobile App: Active</span>
           </div>
           <div className="status-item">
-            <span className="status-indicator"></span>
+            <span className="status-indicator" aria-hidden="true"></span>
             <span className="status-label">Last backup: Today 2:30 AM</span>
           </div>
-        </div>
-      </div>
+        </footer>
+      </main>
     </AdminLayout>
   );
 };

@@ -59,7 +59,6 @@ const AdminLogin = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Email validation
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!formData.email.endsWith('@quickslot.ustp.edu.ph') && 
@@ -69,7 +68,6 @@ const AdminLogin = () => {
       newErrors.email = 'Please enter a valid email format';
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 6) {
@@ -86,7 +84,6 @@ const AdminLogin = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
 
-    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -103,13 +100,11 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Check if account is locked
     if (isLocked) {
       setErrors({ general: `Too many failed attempts. Please wait ${lockTimeRemaining} seconds.` });
       return;
     }
 
-    // Validate form
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -123,20 +118,14 @@ const AdminLogin = () => {
     setErrors({});
     setIsLoading(true);
 
-    // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     try {
-      // Authenticate from mock database
       const admin = dbOperations.authenticateAdmin(formData.email, formData.password);
 
       if (admin) {
-        console.log('✅ Admin login successful:', admin.name);
-        
-        // Reset login attempts on success
         setLoginAttempts(0);
         
-        // Store admin session
         const adminSession = {
           ...admin,
           loginTime: new Date().toISOString(),
@@ -146,14 +135,12 @@ const AdminLogin = () => {
         
         localStorage.setItem('adminUser', JSON.stringify(adminSession));
         
-        // If remember me is checked, store email
         if (formData.rememberMe) {
           localStorage.setItem('rememberedAdminEmail', formData.email);
         } else {
           localStorage.removeItem('rememberedAdminEmail');
         }
         
-        // Log the action
         db.logs.push({
           id: db.logs.length + 1,
           action: 'Admin Login',
@@ -162,17 +149,14 @@ const AdminLogin = () => {
           status: 'success'
         });
         
-        // Show success message before redirect
         setTimeout(() => {
           navigate('/admin/dashboard');
         }, 500);
         
       } else {
-        // Increment login attempts
         const newAttempts = loginAttempts + 1;
         setLoginAttempts(newAttempts);
         
-        // Lock account after 5 failed attempts
         if (newAttempts >= 5) {
           setIsLocked(true);
           setLockTimeRemaining(300);
@@ -200,7 +184,6 @@ const AdminLogin = () => {
         }
       }
     } catch (error) {
-      console.error('Login error:', error);
       setErrors({ general: 'An unexpected error occurred. Please try again.' });
     } finally {
       setIsLoading(false);
@@ -225,7 +208,7 @@ const AdminLogin = () => {
 
   if (initializing) {
     return (
-      <div className="admin-init-container">
+      <main className="admin-init-container">  {/* Keep main with className */}
         <div className="init-content">
           <img 
             src={`${process.env.PUBLIC_URL}/Q-slot.png`}
@@ -239,15 +222,16 @@ const AdminLogin = () => {
           </div>
           <p className="init-text">INITIALIZING SYSTEMS</p>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="admin-login-container">
+    <main className="admin-login-container">  {/* Keep main with className */}
       <div className="admin-login-wrapper">
+        
         {/* Left side - Branding */}
-        <div className="admin-login-brand">
+        <aside className="admin-login-brand" aria-label="Brand information">
           <div className="brand-content">
             <img 
               src={`${process.env.PUBLIC_URL}/Q-slot.png`}
@@ -258,49 +242,50 @@ const AdminLogin = () => {
             <p className="brand-subtitle">Mobile Rental System</p>
             <div className="brand-features">
               <div className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="feature-icon" aria-hidden="true">✓</span>
                 <span>Manage Users</span>
               </div>
               <div className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="feature-icon" aria-hidden="true">✓</span>
                 <span>Track Rentals</span>
               </div>
               <div className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="feature-icon" aria-hidden="true">✓</span>
                 <span>Analytics Dashboard</span>
               </div>
               <div className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="feature-icon" aria-hidden="true">✓</span>
                 <span>Mobile Integration</span>
               </div>
             </div>
-            <div className="brand-footer">
+            <footer className="brand-footer">
               <p>© 2026 QuickSlot USTP</p>
               <p>Version 2.0.0</p>
-            </div>
+            </footer>
           </div>
-        </div>
+        </aside>
 
         {/* Right side - Login Form */}
-        <div className="admin-login-card">
-          <div className="admin-login-header">
+        <section className="admin-login-card" aria-label="Login form">
+          <header className="admin-login-header">
             <div className="header-badge">
-              <span className="badge-icon">🔒</span>
+              <span className="badge-icon" aria-hidden="true">📧</span>
               <span className="badge-text">ADMIN PORTAL</span>
             </div>
             <h2>Welcome Back</h2>
             <p className="admin-subtitle">Sign in to manage your rental system</p>
-          </div>
+          </header>
 
-          <form onSubmit={handleSubmit} className="admin-login-form">
+          <form onSubmit={handleSubmit} className="admin-login-form" noValidate>
             {/* Email Field */}
             <div className="form-group">
-              <label>
-                <span className="label-icon">📧</span>
+              <label htmlFor="email">
+                <span className="label-icon" aria-hidden="true">🔒</span>
                 Admin Email
               </label>
               <div className={`input-wrapper ${touched.email && errors.email ? 'error' : ''}`}>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -310,24 +295,27 @@ const AdminLogin = () => {
                   disabled={isLoading || isLocked}
                   autoComplete="email"
                   className={formData.email ? 'filled' : ''}
+                  aria-invalid={touched.email && !!errors.email}
+                  aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {formData.email && !errors.email && (
-                  <span className="input-valid">✓</span>
+                  <span className="input-valid" aria-hidden="true">✓</span>
                 )}
               </div>
               {touched.email && errors.email && (
-                <span className="error-text">{errors.email}</span>
+                <span id="email-error" className="error-text" role="alert">{errors.email}</span>
               )}
             </div>
 
             {/* Password Field */}
             <div className="form-group">
-              <label>
-                <span className="label-icon">🔑</span>
+              <label htmlFor="password">
+                <span className="label-icon" aria-hidden="true">🔑</span>
                 Password
               </label>
               <div className={`input-wrapper ${touched.password && errors.password ? 'error' : ''}`}>
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
@@ -337,18 +325,21 @@ const AdminLogin = () => {
                   disabled={isLoading || isLocked}
                   autoComplete="current-password"
                   className={formData.password ? 'filled' : ''}
+                  aria-invalid={touched.password && !!errors.password}
+                  aria-describedby={errors.password ? "password-error" : undefined}
                 />
                 <button
                   type="button"
                   className="toggle-password"
                   onClick={() => setShowPassword(!showPassword)}
                   tabIndex="-1"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? "🙈" : "👁️"}
                 </button>
               </div>
               {touched.password && errors.password && (
-                <span className="error-text">{errors.password}</span>
+                <span id="password-error" className="error-text" role="alert">{errors.password}</span>
               )}
             </div>
 
@@ -361,8 +352,9 @@ const AdminLogin = () => {
                   checked={formData.rememberMe}
                   onChange={handleInputChange}
                   disabled={isLoading || isLocked}
+                  aria-label="Remember me"
                 />
-                <span className="checkmark"></span>
+                <span className="checkmark" aria-hidden="true"></span>
                 <span className="checkbox-label">Remember me</span>
               </label>
               
@@ -371,6 +363,7 @@ const AdminLogin = () => {
                 className="forgot-password-link"
                 onClick={handleForgotPassword}
                 disabled={isLoading || isLocked}
+                aria-label="Forgot password"
               >
                 Forgot password?
               </button>
@@ -378,8 +371,8 @@ const AdminLogin = () => {
 
             {/* Error Messages */}
             {errors.general && (
-              <div className="error-message">
-                <span className="error-icon">⚠️</span>
+              <div className="error-message" role="alert" aria-live="polite">
+                <span className="error-icon" aria-hidden="true">⚠️</span>
                 <span>{errors.general}</span>
               </div>
             )}
@@ -389,33 +382,34 @@ const AdminLogin = () => {
               type="submit" 
               className="admin-login-btn"
               disabled={isLoading || isLocked || Object.keys(errors).some(k => k !== 'general')}
+              aria-label={isLoading ? "Verifying credentials" : isLocked ? "Account locked" : "Access dashboard"}
             >
               {isLoading ? (
                 <>
-                  <span className="spinner"></span>
+                  <span className="spinner" aria-hidden="true"></span>
                   <span>VERIFYING CREDENTIALS...</span>
                 </>
               ) : isLocked ? (
                 <>
-                  <span className="lock-icon">🔒</span>
+                  <span className="lock-icon" aria-hidden="true">🔒</span>
                   <span>LOCKED ({lockTimeRemaining}s)</span>
                 </>
               ) : (
                 <>
-                  <span className="btn-icon">→</span>
+                  <span className="btn-icon" aria-hidden="true">→</span>
                   <span>ACCESS DASHBOARD</span>
                 </>
               )}
             </button>
           </form>
 
-          <div className="admin-login-footer">
+          <footer className="admin-login-footer">
             <p>⚠️ Authorized personnel only. All activities are logged and monitored.</p>
             <p className="footer-note">For technical support: it-support@quickslot.ustp.edu.ph</p>
-          </div>
-        </div>
+          </footer>
+        </section>
       </div>
-    </div>
+    </main>
   );
 };
 
